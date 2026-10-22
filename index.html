@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>Panduan Wisata Surakarta</title>
+  <style>
+/* ==========================================================
+   Panduan Wisata Surakarta
+   Palet: indigo wedelan (batik biru tua), emas sogan, abu kebiruan.
+   Huruf: serif sistem untuk judul, sans sistem untuk isi
+   (tanpa font eksternal agar tetap jalan offline).
+   ========================================================== */
+
+:root {
+  --bg: #eef0f4;
+  --sf: #ffffff;
+  --sf2: #f5f6fa;
+  --ink: #1b2233;
+  --mut: #5b6478;
+  --ln: #dbe0e9;
+  --ind: #1f2a6b;
+  --ind-ink: #ffffff;
+  --gold: #a9772f;
+  --hdr: #19215a;
+
+  --map: #e8ecf1;
+  --river: #c3d6e8;
+  --road: #ffffff;
+  --park: #2f7d4f;
+
+  --serif: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --shadow: 0 1px 2px rgba(20, 28, 60, .06), 0 14px 30px -18px rgba(20, 28, 60, .28);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f121a;
+    --sf: #171c2a;
+    --sf2: #1d2335;
+    --ink: #e8ebf2;
+    --mut: #9aa3b8;
+    --ln: #2a3147;
+    --ind: #9aabff;
+    --ind-ink: #0f121a;
+    --gold: #d9a766;
+    --hdr: #131a45;
+
+    --map: #141a29;
+    --river: #21374f;
+    --road: #2b3348;
+    --park: #4fae79;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 14px 30px -18px rgba(0, 0, 0, .6);
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.55 var(--sans);
+  padding-bottom: env(safe-area-inset-bottom);
+  -webkit-text-size-adjust: 100%;
+}
+
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+/* ---------- Header dengan motif kawung ---------- */
+.masthead {
+  padding: calc(34px + env(safe-area-inset-top)) 20px 38px;
+  color: #fff;
+  background-color: var(--hdr);
+  background-image:
+    linear-gradient(95deg, var(--hdr) 18%, rgba(0, 0, 0, 0) 85%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cg fill='none' stroke='%23fff' stroke-opacity='.13' stroke-width='1.2'%3E%3Cellipse cx='32' cy='16' rx='7' ry='15'/%3E%3Cellipse cx='32' cy='48' rx='7' ry='15'/%3E%3Cellipse cx='16' cy='32' rx='15' ry='7'/%3E%3Cellipse cx='48' cy='32' rx='15' ry='7'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='2.2' fill='%23d9a766' fill-opacity='.6'/%3E%3C/svg%3E");
+  background-size: auto, 64px 64px;
+  border-bottom: 3px solid var(--gold);
+}
+.masthead__inner { max-width: 1100px; margin: 0 auto; }
+.masthead h1 {
+  margin: 0;
+  max-width: 16ch;
+  font: 700 clamp(30px, 6vw, 48px) / 1.08 var(--serif);
+  letter-spacing: -.01em;
+  text-wrap: balance;
+}
+.masthead p {
+  margin: 12px 0 0;
+  max-width: 52ch;
+  color: rgba(255, 255, 255, .8);
+  font-size: 15px;
+}
+
+main { max-width: 1100px; margin: 0 auto; padding: 22px 16px 8px; }
+
+/* ---------- Pencarian & filter ---------- */
+.tools { display: grid; gap: 12px; margin-bottom: 18px; }
+
+.search { position: relative; max-width: 420px; }
+.search svg {
+  position: absolute; left: 14px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--mut); pointer-events: none;
+}
+.search input {
+  width: 100%;
+  padding: 12px 14px 12px 42px;
+  border: 1px solid var(--ln);
+  border-radius: 12px;
+  background: var(--sf);
+  color: var(--ink);
+  font: inherit;
+  transition: border-color .15s;
+}
+.search input::placeholder { color: var(--mut); }
+.search input:hover { border-color: var(--mut); }
+
+.chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px; scrollbar-width: thin; }
+.chip {
+  flex: none;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--ln);
+  border-radius: 99px;
+  background: var(--sf);
+  color: var(--ink);
+  font: inherit; font-size: 14px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.chip:hover { border-color: var(--ind); }
+.chip__dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c, var(--mut)); }
+.chip__n { color: var(--mut); font-variant-numeric: tabular-nums; }
+.chip[aria-pressed="true"] { background: var(--ind); border-color: var(--ind); color: var(--ind-ink); }
+.chip[aria-pressed="true"] .chip__n { color: inherit; opacity: .75; }
+.chip[aria-pressed="true"] .chip__dot { box-shadow: 0 0 0 2px var(--ind-ink); }
+
+/* ---------- Tata letak ---------- */
+.layout {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "map" "detail" "list";
+}
+/* di layar sempit, pembungkus .side dilebur agar urutannya peta, detail, daftar */
+.side     { display: contents; }
+.mapcard  { grid-area: map; }
+.detail   { grid-area: detail; scroll-margin-top: 12px; }
+.listing  { grid-area: list; }
+
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+    grid-template-areas: "list side";
+    align-items: start;
+  }
+  .listing { grid-area: list; }
+  .side {
+    grid-area: side;
+    display: grid;
+    gap: 18px;
+    position: sticky;
+    top: 16px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    padding: 2px;           /* ruang untuk bayangan kartu */
+  }
+  .mapcard, .detail { grid-area: auto; }
+}
+@media (max-width: 899px) {
+  .detail[data-empty] { display: none; }
+}
+
+.card {
+  background: var(--sf);
+  border: 1px solid var(--ln);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+/* ---------- Peta ---------- */
+.mapcard { padding: 10px; }
+.mapscroll { overflow-x: auto; border-radius: 10px; }
+#map { display: block; width: 100%; height: auto; background: var(--map); border-radius: 10px; }
+@media (max-width: 700px) { #map { min-width: 680px; } }
+
+.note { margin: 10px 6px 4px; font-size: 12.5px; color: var(--mut); }
+
+.m-grid  { fill: none; stroke: var(--ln); stroke-opacity: .55; stroke-width: 1; }
+.m-park  { fill: var(--park); fill-opacity: .16; }
+.m-river { fill: none; stroke: var(--river); stroke-width: 26; stroke-linecap: round; stroke-linejoin: round; }
+.m-main  { fill: none; stroke: var(--road); stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
+.m-road  { fill: none; stroke: var(--road); stroke-width: 5; stroke-linecap: round; }
+.m-kraton { fill: none; stroke: var(--gold); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.m-label { fill: var(--mut); font: italic 15px var(--sans); }
+.m-compass { fill: var(--ink); fill-opacity: .55; }
+.m-compass-t { fill: var(--ink); font: 600 12px var(--sans); text-anchor: middle; }
+
+/* Pin */
+.pin { cursor: pointer; outline: none; }
+.pin__body { transform-origin: 0 0; transform: scale(1.3); transition: transform .15s ease; }
+.pin__shape { fill: var(--c); stroke: var(--sf); stroke-width: 2; stroke-linejoin: round; }
+.pin__dot { fill: #fff; }
+.pin:hover .pin__body, .pin:focus-visible .pin__body { transform: scale(1.5); }
+.pin.is-selected .pin__body { transform: scale(1.8); }
+.pin:focus-visible .pin__shape { stroke: var(--gold); stroke-width: 3; }
+.pin.is-dim { opacity: .14; pointer-events: none; }
+
+.pin__label { opacity: 0; pointer-events: none; transition: opacity .15s; }
+.pin:hover .pin__label, .pin:focus-visible .pin__label, .pin.is-selected .pin__label { opacity: 1; }
+.pin__pill { fill: var(--sf); stroke: var(--c); stroke-width: 1.5; }
+.pin__text { fill: var(--ink); font: 600 17px var(--sans); }
+
+/* ---------- Daftar ---------- */
+.listing__count { margin: 0 0 10px; font: 600 14px var(--sans); color: var(--mut); }
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.item {
+  width: 100%;
+  display: block;
+  text-align: left;
+  padding: 12px 16px;
+  border: 1px solid var(--ln);
+  border-left: 5px solid var(--c);
+  border-radius: 12px;
+  background: var(--sf);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: background .15s, box-shadow .15s;
+}
+.item:hover { background: var(--sf2); }
+.item[aria-current="true"] { background: var(--sf2); box-shadow: 0 0 0 1.5px var(--c) inset; }
+.item b { display: block; font-weight: 600; }
+.item small { display: block; margin-top: 1px; color: var(--mut); font-size: 13px; }
+
+.empty {
+  padding: 28px 20px;
+  text-align: center;
+  color: var(--mut);
+  border: 1px dashed var(--ln);
+  border-radius: 12px;
+}
+.empty button {
+  display: block; margin: 12px auto 0;
+  padding: 8px 16px;
+  border: 1px solid var(--ind); border-radius: 99px;
+  background: transparent; color: var(--ind);
+  font: inherit; font-size: 14px; cursor: pointer;
+}
+.empty button:hover { background: var(--ind); color: var(--ind-ink); }
+
+/* ---------- Detail ---------- */
+.detail { position: relative; overflow: hidden; }
+.detail__bar { height: 6px; background: var(--c); }
+.detail__body { padding: 20px 22px 24px; }
+.detail__close {
+  position: absolute; top: 16px; right: 14px;
+  width: 34px; height: 34px;
+  border: 1px solid var(--ln); border-radius: 50%;
+  background: var(--sf); color: var(--mut);
+  font-size: 20px; line-height: 1; cursor: pointer;
+}
+.detail__close:hover { color: var(--ink); border-color: var(--mut); }
+
+.tag {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 99px;
+  background: var(--c);
+  color: #fff;
+  font-size: 13px; font-weight: 600;
+}
+.detail h2 {
+  margin: 12px 0 8px;
+  padding-right: 36px;
+  font: 700 26px / 1.18 var(--serif);
+  text-wrap: balance;
+}
+.detail__desc { margin: 0; max-width: 60ch; font-family: var(--serif); font-size: 16px; line-height: 1.7; }
+
+.facts { margin: 18px 0 0; display: grid; grid-template-columns: 7.5rem 1fr; font-size: 14.5px; }
+.facts dt, .facts dd { padding: 10px 0; border-top: 1px solid var(--ln); }
+.facts dt { color: var(--mut); }
+.facts dd { margin: 0; }
+
+.tip {
+  margin-top: 6px;
+  padding: 12px 14px;
+  border-left: 3px solid var(--gold);
+  border-radius: 0 10px 10px 0;
+  background: var(--sf2);
+  font-size: 14.5px;
+}
+.tip strong { display: block; margin-bottom: 2px; }
+
+.detail__empty { padding: 40px 28px; text-align: center; color: var(--mut); }
+.detail__empty svg { display: block; margin: 0 auto 14px; color: var(--gold); }
+.detail__empty p { margin: 0 auto; max-width: 30ch; }
+
+/* ---------- Kaki halaman ---------- */
+.foot { max-width: 1100px; margin: 0 auto; padding: 18px 16px 34px; color: var(--mut); font-size: 13px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
+}
+  </style>
+</head>
+<body>
+
+  <header class="masthead">
+    <div class="masthead__inner">
+      <h1>Panduan Wisata Surakarta</h1>
+      <p>Keraton, batik, dan kuliner malam Kota Solo dalam satu berkas. Semua data tersimpan di perangkat ini, jadi bisa dibuka tanpa internet.</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="tools">
+      <div class="search">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input type="search" id="q" placeholder="Cari tempat, misalnya batik atau liwet" aria-label="Cari tempat" autocomplete="off">
+      </div>
+      <div class="chips" id="chips" role="group" aria-label="Filter kategori"></div>
+    </div>
+
+    <div class="layout">
+      <div class="side">
+      <section class="card mapcard" aria-label="Peta wisata">
+        <div class="mapscroll" id="mapscroll">
+          <svg id="map" viewBox="0 0 1000 620" role="group" aria-label="Peta ilustrasi Kota Surakarta">
+            <g id="base"></g>
+            <g id="pins"></g>
+          </svg>
+        </div>
+        <p class="note">Peta ilustrasi, tidak sesuai skala. Posisi tiap tempat dihitung dari koordinatnya. Arahkan kursor atau pilih pin untuk melihat namanya.</p>
+      </section>
+
+      <aside class="card detail" id="detail" aria-live="polite"></aside>
+      </div>
+
+      <section class="listing" aria-labelledby="count">
+        <h2 class="listing__count" id="count"></h2>
+        <ul class="list" id="list"></ul>
+      </section>
+    </div>
+  </main>
+
+  <footer class="foot">Jam buka dan harga bisa berubah. Cek kembali sebelum berkunjung.</footer>
+
+  <!-- DATABASE LOKAL: edit bagian ini untuk menambah atau mengubah tempat -->
+  <script>
+/* DATABASE LOKAL — edit berkas ini untuk menambah atau mengubah tempat.
+   Berkas ini sengaja berupa .js (bukan .json) agar tetap terbaca saat dibuka langsung
+   dari penyimpanan tanpa server (file://). */
+window.DB = 
+{
+"kategori":[
+ {"id":"budaya","nama":"Budaya & Sejarah","warna":"#8a4b2a"},
+ {"id":"kuliner","nama":"Kuliner","warna":"#c2410c"},
+ {"id":"alam","nama":"Alam & Taman","warna":"#2f7d4f"},
+ {"id":"belanja","nama":"Belanja & Batik","warna":"#6d3fa0"}
+],
+"tempat":[
+ {"id":1,"nama":"Keraton Kasunanan Surakarta","kategori":"budaya","lat":-7.5782,"lon":110.8283,"alamat":"Jl. Siswa, Baluwarti","jam":"09.00-14.00 (Jumat tutup lebih awal)","tiket":"Sekitar Rp15.000","deskripsi":"Istana Kasunanan dengan museum pusaka, kereta kencana, dan bangunan khas Jawa. Tempat terbaik untuk mengenal tradisi keraton.","tips":"Berpakaian sopan dan ikuti arahan pemandu setempat."},
+ {"id":2,"nama":"Pura Mangkunegaran","kategori":"budaya","lat":-7.5667,"lon":110.8228,"alamat":"Jl. Ronggowarsito","jam":"09.00-15.00","tiket":"Sekitar Rp20.000","deskripsi":"Istana Mangkunegaran dengan pendapa luas dan koleksi topeng, perhiasan, serta perlengkapan tari.","tips":"Pemandu tersedia pada jam kunjungan."},
+ {"id":3,"nama":"Museum Radya Pustaka","kategori":"budaya","lat":-7.5683,"lon":110.8105,"alamat":"Jl. Slamet Riyadi","jam":"08.00-14.00, Senin tutup","tiket":"Sekitar Rp10.000","deskripsi":"Salah satu museum tertua di Indonesia, berisi arca, wayang, naskah kuno, dan benda bersejarah.","tips":"Cocok dikombinasikan dengan jalan kaki ke Taman Sriwedari."},
+ {"id":4,"nama":"Benteng Vastenburg","kategori":"budaya","lat":-7.5720,"lon":110.8330,"alamat":"Jl. Jend. Sudirman","jam":"Area luar terbuka","tiket":"Gratis","deskripsi":"Benteng peninggalan kolonial Belanda di pusat kota. Sering dipakai untuk acara budaya.","tips":"Dekat dengan Pasar Gede, bagus untuk satu rute pendek."},
+ {"id":5,"nama":"Masjid Agung Surakarta","kategori":"budaya","lat":-7.5775,"lon":110.8270,"alamat":"Jl. Alun-alun Utara","jam":"Mengikuti waktu salat","tiket":"Gratis","deskripsi":"Masjid bersejarah di kompleks keraton dengan arsitektur Jawa yang kuat.","tips":"Gunakan pakaian tertutup dan jaga ketenangan."},
+ {"id":6,"nama":"Galabo (Gladak Langen Bogan)","kategori":"kuliner","lat":-7.5713,"lon":110.8276,"alamat":"Jl. Slamet Riyadi, kawasan Gladak","jam":"Malam hari, sekitar 17.00-23.00","tiket":"Gratis (bayar jajanan)","deskripsi":"Sentra jajanan malam di sepanjang jalan. Banyak pilihan makanan khas Solo dalam satu tempat.","tips":"Datang sebelum pukul 19.00 untuk menghindari antrean panjang."},
+ {"id":7,"nama":"Nasi Liwet Wongso Lemu","kategori":"kuliner","lat":-7.5670,"lon":110.8190,"alamat":"Kawasan Keprabon","jam":"Malam hingga dini hari","tiket":"Rp15.000-30.000 per porsi","deskripsi":"Nasi liwet khas Solo dengan santan gurih, suwiran ayam, telur, dan areh.","tips":"Pilihan pas untuk makan malam setelah jalan-jalan."},
+ {"id":8,"nama":"Timlo Solo Sastro","kategori":"kuliner","lat":-7.5733,"lon":110.8293,"alamat":"Dekat Pasar Gede","jam":"Siang hingga sore","tiket":"Rp20.000-40.000 per porsi","deskripsi":"Timlo, sup berkuah bening dengan isian sosis Solo, ati ampela, dan telur pindang.","tips":"Tanyakan jam buka terlebih dahulu karena bisa berubah."},
+ {"id":9,"nama":"Serabi Notosuman","kategori":"kuliner","lat":-7.5598,"lon":110.8170,"alamat":"Jl. Notosuman","jam":"Pagi hingga siang","tiket":"Rp5.000-15.000","deskripsi":"Serabi gurih-manis yang dibakar di tungku tanah liat. Cocok untuk oleh-oleh.","tips":"Datang pagi karena sering cepat habis."},
+ {"id":10,"nama":"Pasar Gede Hardjonagoro","kategori":"belanja","lat":-7.5700,"lon":110.8312,"alamat":"Jl. Jend. Sudirman","jam":"Pagi hingga sore","tiket":"Gratis","deskripsi":"Pasar tradisional bersejarah dengan jajanan, dawet, dan bumbu. Dekat Klenteng Tien Kok Sie.","tips":"Coba es dawet telasih sebagai penutup."},
+ {"id":11,"nama":"Pasar Klewer","kategori":"belanja","lat":-7.5753,"lon":110.8277,"alamat":"Jl. Dr. Rajiman, dekat Keraton","jam":"Pagi hingga sore","tiket":"Gratis","deskripsi":"Pusat grosir batik dan tekstil terbesar di Solo.","tips":"Tawar-menawar sudah biasa; bandingkan harga di beberapa kios."},
+ {"id":12,"nama":"Kampung Batik Laweyan","kategori":"belanja","lat":-7.5718,"lon":110.7985,"alamat":"Laweyan","jam":"Sekitar 08.00-17.00","tiket":"Gratis","deskripsi":"Kampung pengrajin batik dengan galeri, workshop, dan bangunan lama bergaya Jawa-Eropa.","tips":"Ikut kelas membatik singkat jika ada waktu."},
+ {"id":13,"nama":"Kampung Batik Kauman","kategori":"belanja","lat":-7.5760,"lon":110.8260,"alamat":"Kauman, dekat Masjid Agung","jam":"Sekitar 08.00-17.00","tiket":"Gratis","deskripsi":"Kampung batik tua dengan gang sempit dan banyak rumah produksi batik tulis.","tips":"Jelajahi dengan berjalan kaki."},
+ {"id":14,"nama":"Taman Balekambang","kategori":"alam","lat":-7.5560,"lon":110.8120,"alamat":"Jl. Ahmad Yani, Manahan","jam":"06.00-17.00","tiket":"Murah, sekitar Rp5.000","deskripsi":"Taman kota rindang dengan kolam, pohon besar, dan area santai keluarga.","tips":"Bagus untuk jalan pagi atau piknik singkat."},
+ {"id":15,"nama":"Taman Sriwedari","kategori":"alam","lat":-7.5688,"lon":110.8110,"alamat":"Jl. Slamet Riyadi","jam":"Sepanjang hari","tiket":"Gratis","deskripsi":"Ruang terbuka hijau di tengah kota, dekat Museum Radya Pustaka.","tips":"Pas untuk istirahat di tengah rute wisata."},
+ {"id":16,"nama":"Taman Satwa Taru Jurug","kategori":"alam","lat":-7.5700,"lon":110.8590,"alamat":"Jebres, tepi Bengawan Solo","jam":"08.00-17.00","tiket":"Sekitar Rp20.000","deskripsi":"Kebun binatang di tepi Bengawan Solo dengan koleksi satwa dan area bermain.","tips":"Cocok untuk keluarga dengan anak."},
+ {"id":17,"nama":"Ngarsopuro Night Market","kategori":"belanja","lat":-7.5670,"lon":110.8222,"alamat":"Jl. Diponegoro, depan Mangkunegaran","jam":"Sabtu malam, sekitar 17.00-22.00","tiket":"Gratis","deskripsi":"Pasar malam mingguan dengan kerajinan, jajanan, dan pertunjukan kecil.","tips":"Jadwal bisa berubah, cek informasi terbaru."}
+]
+}
+;
+  </script>
+
+  <script>
+/* Panduan Wisata Surakarta
+   Membutuhkan data.js (window.DB) yang dimuat lebih dulu. */
+(function () {
+  'use strict';
+
+  const DB = window.DB;
+  const KAT = Object.fromEntries(DB.kategori.map(k => [k.id, k]));
+  const state = { kategori: 'semua', kata: '', pilih: null };
+
+  const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const mobile = matchMedia('(max-width: 899px)');
+
+  function svg(name, attrs, text) {
+    const e = document.createElementNS(NS, name);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (text) e.textContent = text;
+    return e;
+  }
+  function html(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  /* ---------- Proyeksi koordinat ke kanvas 1000 x 620 ---------- */
+  const lats = DB.tempat.map(t => t.lat);
+  const lons = DB.tempat.map(t => t.lon);
+  const L = {
+    a: Math.min(...lats) - .004, b: Math.max(...lats) + .004,
+    c: Math.min(...lons) - .008, d: Math.max(...lons) + .008
+  };
+  const px = lon => (lon - L.c) / (L.d - L.c) * 900 + 50;
+  const py = lat => (L.b - lat) / (L.b - L.a) * 520 + 50;
+  const pts = list => list.map(([lon, lat]) => `${px(lon).toFixed(1)},${py(lat).toFixed(1)}`).join(' ');
+
+  /* ---------- Filter ---------- */
+  function cocok(t, kategori = state.kategori) {
+    const cocokKat = kategori === 'semua' || t.kategori === kategori;
+    const teks = (t.nama + ' ' + t.deskripsi + ' ' + t.alamat + ' ' + KAT[t.kategori].nama).toLowerCase();
+    return cocokKat && (!state.kata || teks.includes(state.kata));
+  }
+
+  /* ---------- Peta (bagian tetap) ---------- */
+  function gambarDasar() {
+    const g = $('base');
+    const defs = svg('defs');
+    const pat = svg('pattern', { id: 'grid', width: 50, height: 50, patternUnits: 'userSpaceOnUse' });
+    pat.appendChild(svg('path', { d: 'M50 0H0V50', class: 'm-grid' }));
+    defs.appendChild(pat);
+    g.append(defs, svg('rect', { width: 1000, height: 620, fill: 'url(#grid)' }));
+
+    // taman
+    [[-7.5560, 110.8120, 70, 40], [-7.5688, 110.8110, 40, 28], [-7.5700, 110.8590, 55, 40]].forEach(([la, lo, w, h]) =>
+      g.appendChild(svg('ellipse', { class: 'm-park', cx: px(lo), cy: py(la), rx: w, ry: h })));
+
+    // Bengawan Solo
+    g.appendChild(svg('polyline', { class: 'm-river', points: pts([[110.846, -7.5515], [110.851, -7.5600], [110.8565, -7.5660], [110.8530, -7.5730], [110.8580, -7.5830]]) }));
+    g.appendChild(svg('text', { class: 'm-label', x: px(110.8565) + 20, y: py(-7.5665) }, 'Bengawan Solo'));
+
+    // jalan lain
+    [[[110.8276, -7.5560], [110.8276, -7.5800]], [[110.8312, -7.5700], [110.8590, -7.5690]], [[110.8150, -7.5560], [110.8290, -7.5790]]]
+      .forEach(j => g.appendChild(svg('polyline', { class: 'm-road', points: pts(j) })));
+
+    // Jl. Slamet Riyadi
+    g.appendChild(svg('polyline', { class: 'm-main', points: pts([[110.790, -7.5655], [110.810, -7.5675], [110.8230, -7.5690], [110.8276, -7.5710], [110.8320, -7.5712]]) }));
+    g.appendChild(svg('text', { class: 'm-label', x: px(110.800), y: py(-7.5665) - 12 }, 'Jl. Slamet Riyadi'));
+
+    // area keraton
+    g.appendChild(svg('rect', { class: 'm-kraton', x: px(110.8283) - 34, y: py(-7.5782) - 28, width: 68, height: 56, rx: 6 }));
+
+    // kompas
+    const k = svg('g', { transform: 'translate(940,60)' });
+    k.append(svg('path', { class: 'm-compass', d: 'M0-22 L7 0 L0 22 L-7 0Z' }), svg('text', { class: 'm-compass-t', y: -27 }, 'U'));
+    g.appendChild(k);
+  }
+
+  /* ---------- Peta (pin) ---------- */
+  const PIN = 'M0 0C-2.5-5-10-10.5-10-17.5A10 10 0 1 1 10-17.5C10-10.5 2.5-5 0 0Z';
+
+  function gambarPin() {
+    const g = $('pins');
+    const fokus = document.activeElement && document.activeElement.closest && document.activeElement.closest('.pin');
+    const fokusId = fokus ? fokus.dataset.id : null;
+    g.replaceChildren();
+
+    // pin terpilih digambar paling akhir agar berada di atas
+    const urut = [...DB.tempat].sort((a, b) => (a.id === state.pilih) - (b.id === state.pilih));
+    const pasang = [];
+
+    urut.forEach(t => {
+      const sel = t.id === state.pilih;
+      const x = px(t.lon), y = py(t.lat);
+      const p = svg('g', {
+        class: 'pin' + (sel ? ' is-selected' : '') + (cocok(t) ? '' : ' is-dim'),
+        transform: `translate(${x.toFixed(1)},${y.toFixed(1)})`,
+        tabindex: 0, role: 'button', 'aria-label': t.nama, 'aria-pressed': sel, 'data-id': t.id
+      });
+      p.style.setProperty('--c', KAT[t.kategori].warna);
+
+      const body = svg('g', { class: 'pin__body' });
+      body.append(svg('title', {}, t.nama), svg('path', { class: 'pin__shape', d: PIN }), svg('circle', { class: 'pin__dot', cy: -17.5, r: 3.6 }));
+      p.appendChild(body);
+
+      const kiri = x > 720;
+      const label = svg('g', { class: 'pin__label' });
+      const pill = svg('rect', { class: 'pin__pill' });
+      const teks = svg('text', { class: 'pin__text', x: kiri ? -30 : 30, y: sel ? -26 : -22, 'text-anchor': kiri ? 'end' : 'start' }, t.nama);
+      label.append(pill, teks);
+      p.appendChild(label);
+
+      p.addEventListener('click', () => buka(t.id, true));
+      p.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); buka(t.id, true); }
+      });
+      g.appendChild(p);
+      pasang.push([pill, teks]);
+    });
+
+    // ukur teks setelah masuk DOM, lalu bentuk "pill" di belakangnya
+    pasang.forEach(([pill, teks]) => {
+      const b = teks.getBBox();
+      pill.setAttribute('x', b.x - 10);
+      pill.setAttribute('y', b.y - 4);
+      pill.setAttribute('width', b.width + 20);
+      pill.setAttribute('height', b.height + 8);
+      pill.setAttribute('rx', (b.height + 8) / 2);
+    });
+
+    if (fokusId) {
+      const lagi = g.querySelector(`.pin[data-id="${fokusId}"]`);
+      if (lagi) lagi.focus({ preventScroll: true });
+    }
+  }
+
+  /* ---------- Filter kategori ---------- */
+  function buatChips() {
+    const w = $('chips');
+    [{ id: 'semua', nama: 'Semua', warna: null }, ...DB.kategori].forEach(k => {
+      const b = html('button', 'chip');
+      b.type = 'button';
+      b.dataset.id = k.id;
+      if (k.warna) b.style.setProperty('--c', k.warna);
+      b.append(html('span', 'chip__dot'), html('span', 'chip__nama', k.nama), html('span', 'chip__n'));
+      b.addEventListener('click', () => { state.kategori = k.id; segarkan(); });
+      w.appendChild(b);
+    });
+  }
+  function segarkanChips() {
+    $('chips').querySelectorAll('.chip').forEach(b => {
+      const id = b.dataset.id;
+      b.setAttribute('aria-pressed', state.kategori === id);
+      b.querySelector('.chip__n').textContent = DB.tempat.filter(t => cocok(t, id)).length;
+    });
+  }
+
+  /* ---------- Daftar ---------- */
+  function gambarDaftar() {
+    const ul = $('list');
+    ul.replaceChildren();
+    const hasil = DB.tempat.filter(t => cocok(t));
+    $('count').textContent = hasil.length + ' tempat';
+
+    if (!hasil.length) {
+      const li = html('li', 'empty', 'Tidak ada tempat yang cocok dengan pencarian ini.');
+      const reset = html('button', null, 'Hapus filter');
+      reset.type = 'button';
+      reset.addEventListener('click', () => {
+        state.kategori = 'semua'; state.kata = ''; $('q').value = ''; segarkan();
+      });
+      li.appendChild(reset);
+      ul.appendChild(li);
+      return;
+    }
+
+    hasil.forEach(t => {
+      const li = html('li');
+      const b = html('button', 'item');
+      b.type = 'button';
+      b.dataset.id = t.id;
+      b.style.setProperty('--c', KAT[t.kategori].warna);
+      b.append(html('b', null, t.nama), html('small', null, KAT[t.kategori].nama + ', ' + t.alamat));
+      b.addEventListener('click', () => buka(t.id, false));
+      li.appendChild(b);
+      ul.appendChild(li);
+    });
+    tandaiDaftar();
+  }
+  function tandaiDaftar() {
+    $('list').querySelectorAll('.item').forEach(b => {
+      if (Number(b.dataset.id) === state.pilih) b.setAttribute('aria-current', 'true');
+      else b.removeAttribute('aria-current');
+    });
+  }
+
+  /* ---------- Detail ---------- */
+  function gambarDetail() {
+    const d = $('detail');
+    const t = DB.tempat.find(x => x.id === state.pilih);
+    d.replaceChildren();
+
+    if (!t) {
+      d.dataset.empty = '';
+      d.style.removeProperty('--c');
+      const e = html('div', 'detail__empty');
+      e.innerHTML = '<svg viewBox="0 0 24 34" width="30" height="42" aria-hidden="true"><path d="M12 33C10 27 1 21 1 12a11 11 0 1 1 22 0c0 9-9 15-11 21z" fill="currentColor"/><circle cx="12" cy="12" r="4" fill="#fff"/></svg>';
+      e.appendChild(html('p', null, 'Pilih pin di peta atau tempat di daftar untuk melihat jam buka, tiket, dan tips kunjungan.'));
+      d.appendChild(e);
+      return;
+    }
+
+    delete d.dataset.empty;
+    const k = KAT[t.kategori];
+    d.style.setProperty('--c', k.warna);
+
+    const close = html('button', 'detail__close', '×');
+    close.type = 'button';
+    close.setAttribute('aria-label', 'Tutup detail');
+    close.addEventListener('click', tutup);
+
+    const body = html('div', 'detail__body');
+    const dl = html('dl', 'facts');
+    [['Alamat', t.alamat], ['Jam buka', t.jam], ['Tiket / harga', t.tiket], ['Koordinat', t.lat.toFixed(4) + ', ' + t.lon.toFixed(4)]]
+      .forEach(([a, b]) => dl.append(html('dt', null, a), html('dd', null, b)));
+
+    const tip = html('div', 'tip');
+    tip.append(html('strong', null, 'Tips kunjungan'), document.createTextNode(t.tips));
+
+    body.append(html('span', 'tag', k.nama), html('h2', null, t.nama), html('p', 'detail__desc', t.deskripsi), dl, tip);
+    d.append(html('div', 'detail__bar'), close, body);
+  }
+
+  /* ---------- Interaksi ---------- */
+  function buka(id, dariPeta) {
+    state.pilih = id;
+    gambarPin();
+    tandaiDaftar();
+    gambarDetail();
+
+    if (!dariPeta) {
+      // di layar sempit peta bisa digeser; bawa pin terpilih ke tengah
+      const box = $('mapscroll');
+      const t = DB.tempat.find(x => x.id === id);
+      if (box.scrollWidth > box.clientWidth) {
+        const lebar = $('map').getBoundingClientRect().width;
+        box.scrollTo({ left: px(t.lon) / 1000 * lebar - box.clientWidth / 2, behavior: reduced.matches ? 'auto' : 'smooth' });
+      }
+    }
+    if (mobile.matches) {
+      $('detail').scrollIntoView({ behavior: reduced.matches ? 'auto' : 'smooth', block: 'start' });
+    }
+  }
+  function tutup() {
+    state.pilih = null;
+    gambarPin(); tandaiDaftar(); gambarDetail();
+  }
+  function segarkan() {
+    segarkanChips(); gambarPin(); gambarDaftar(); gambarDetail();
+  }
+
+  $('q').addEventListener('input', e => { state.kata = e.target.value.trim().toLowerCase(); segarkan(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.pilih != null) tutup(); });
+
+  buatChips();
+  gambarDasar();
+  segarkan();
+})();
+  </script>
+</body>
+</html>
