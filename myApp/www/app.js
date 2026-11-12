@@ -835,6 +835,6 @@
     "serviceWorker" in navigator &&
     /^https?:$/.test(location.protocol)
   ) {
-    navigator.serviceWorker.register("sw.js").catch(() => { });
+    navigator.serviceWorker.register("../www/sw.js").catch(() => { });
   }
 })();
